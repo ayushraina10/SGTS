@@ -1,5 +1,5 @@
 # SGTS (Sampling Guided Tree Search)
-This repository provides the code used in the Self-Learning Design Agent (paper) [paper](). The repository builds upon Watch the Unobserved [paper](https://github.com/liuanji/WU-UCT) and makes several updates across files to enable application to complex actions spaces. Major updates are within policy architechture (Policy/ folder), root node initialization (Node/), and tree search component (Tree/). The policy network generates a prior distribution on feasible actions which intializes the tree nodes and guides the search in a pruned design space. The policy network architechture is based on Design Strategy Network([paper](https://asmedigitalcollection.asme.org/mechanicaldesign/article/144/2/021404/1120713/Design-Strategy-Network-A-Deep-Hierarchical)) and an updated version of the architecturrer is provided identical to the one used in SLDA paper.
+This repository provides the code used in the Self-Learning Design Agent (paper) [paper](). The repository builds upon Watch the Unobserved [paper](https://github.com/liuanji/WU-UCT) and makes several updates across files to enable application to complex actions spaces. Major updates are within policy architechture (Policy/ folder), root node initialization (Node/), and tree search component (Tree/). The policy network generates a prior distribution on feasible actions which intializes the tree nodes and guides the search in a pruned design space. The policy network architechture is based on Design Strategy Network([paper](https://asmedigitalcollection.asme.org/mechanicaldesign/article/144/2/021404/1120713/Design-Strategy-Network-A-Deep-Hierarchical)) and an updated version of the architecturrer is provided identical to the one used in SLDA paper. This rerpository contains the decision making framework of the given agent achitecture. ![](fig.png) 
 
 # Usage
 This repository provides code snippets for future usage. Although the code is not functional as it is, these snippets of tree search can be applied to new problems with complex action spaces. The strructure for environment and policy classes are defined in environment and policy wrapper definitions respectively.
@@ -16,7 +16,7 @@ This repository provides code snippets for future usage. Although the code is no
 4. 
 
 * A full list of parameters
-  * --model: MCTS model to use (currently support WU-UCT and UCT).
+  * --model: MCTS model to use (currently only supports WU-UCT).
   * --env-name: name of the environment.
   * --MCTS-max-steps: number of simulation steps in the planning phase.
   * --MCTS-max-depth: maximum planning depth.
