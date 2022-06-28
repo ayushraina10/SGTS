@@ -132,27 +132,6 @@ class Game():
         """
         return self.env.tu.evaluate(self.env.members, self.env.nodes)
 
-    def getCanonicalForm(self, state):
-        """
-        Input:
-            state: the parameteric representation of the state (memebers, nodes)
-
-        Returns:
-            canonicalBoard:
-        """
-        raise NameError('Not Implemented')
-
-    def getSymmetries(self, board, pi):
-        """
-        Input:
-            board: current board
-            pi: policy vector of size self.getActionSize()
-
-        Returns:
-            symmForms: 
-        """
-        raise NameError('Not Implemented')
-
     def stringRepresentation(self, state = []):
         """
         Input:
@@ -171,8 +150,6 @@ class Game():
         
         #nodes
         members, nodes = sort_state(members, nodes)
-        
-#         string_rep = str(iteration).zfill(3)+':'
         string_rep = ''
 
         #convert to string
@@ -191,40 +168,6 @@ class Game():
         string_rep=string_rep[:-1]
         
         return string_rep
-
-#     def stringToParametericRepresentation(self, string):
-#         '''Input: string representation of state
-#            Output: nodes and member matrix representation'''
-
-# #         if string == []:
-# #             print("please input string, using default")
-# #             return self.stringToParametericRepresentation(self.stringRepresentation())
-
-#         iteration = 0
-# #         iteration = int(string[:3])
-
-# #         string = string[4:]
-
-#         nodesS, membersS = string.split('M')
-
-#         nCoords = nodesS.split(':')
-#         nodes = np.ones((len(nCoords), 2))
-#         for ctr, rows in enumerate(nCoords):
-#             coord = rows.split(',')
-#             nodes[ctr, 0] = float(coord[0])
-#             nodes[ctr, 1] = float(coord[1])
-
-#         if membersS == '':
-#             members = {}
-#             return [members, nodes, iteration]
-
-#         mCoords = membersS.split(':')
-#         members = {}
-#         for mm in mCoords:
-#             key, thickness = mm.split(';')
-#             num1, num2 = int(key.split(',')[0][1:]), int(key.split(',')[1][:-1])
-#             members[(num1, num2)] = int(thickness)
-#         return [members, nodes, iteration]
 
 
     def actionToString(self, array):
