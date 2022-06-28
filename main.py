@@ -9,7 +9,7 @@ import os
 os.environ['PYTHONHASHSEED']=str(seed_value)
 os.environ['CUDA_LAUNCH_BLOCKING']='1'
 
-os.environ['CUDA_VISIBLE_DEVICES'] = '0, 1,2, 3'
+# os.environ['CUDA_VISIBLE_DEVICES'] = '0, 1,2, 3'
 # 2. Set `python` built-in pseudo-random generator at a fixed value
 import random
 random.seed(seed_value)

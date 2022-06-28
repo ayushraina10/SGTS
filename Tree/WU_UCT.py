@@ -51,14 +51,10 @@ class WU_UCT():
             max_width = self.max_width
         )
 
-        #this should give the feasible set of actions in the particular state
-        #this should be a variable thing as it changes with different states
-
         self.max_width = min(self.action_n, self.max_width)
 
         assert self.max_depth > 0 and 0 < self.max_width <= self.action_n
         ##change this as max_width is how much we will be searching and can be more than the feasible actions sampled
-        ##also need to edit the associated meaning across functions
 
         # Expansion worker pool
         self.expansion_worker_pool = PoolManager(
@@ -117,7 +113,6 @@ class WU_UCT():
         times = []
 
         game_start_time = time.process_time()
-        # game_start_time = time.time()
         
 
         logging.info("Start simulation")
@@ -128,12 +123,10 @@ class WU_UCT():
         while not done and (max_episode_length == -1 or step_count < max_episode_length):
             # Plan a best action under the current state
             simulation_start_time = time.process_time()
-            # simulation_start_time = time.time()
             
             index, actions = self.simulate_single_move(state)
             action = actions[index]
             simulation_end_time = time.process_time()
-            # simulation_end_time = time.time()
             
 
             # Interact with the environment
@@ -143,8 +136,6 @@ class WU_UCT():
             rewards.append(reward)
             times.append(simulation_end_time - simulation_start_time)
 
-            # print("> Time step {}, take action {}, instance reward {}, best reward {}, used {} seconds".format(
-                # step_count, action*np.array([1,1,1,6,5,6,5]), reward, max(rewards), simulation_end_time - simulation_start_time))
             logging.info("> Time step {}, take action {}, instance reward {}, best reward {}, used {} seconds".format(
                 step_count, action, reward, max(rewards), simulation_end_time - simulation_start_time))
 
@@ -157,18 +148,10 @@ class WU_UCT():
             accu_reward += reward
             state = next_state
             step_count += 1
-
-        # im = Image.fromarray(np.moveaxis(state[0], 0, -1))
-        # runid = self.args.runid
-        # im.save(f'final_image_{runid}.png')
-        # np.save(f'State-action-rewards_{runid}.npy', [store_states, store_actions, rewards, times, self.args])
         
         game_end_time = time.process_time()
-        # game_end_time = time.time()
         
         print("> game ended. best reward: {}, used time {} s".format(max(rewards), game_end_time - game_start_time))
-        # logging.info("> game ended. best reward: {}, used time {} s".format(max(rewards),
-            # game_end_time - game_start_time))
 
         return np.array(rewards, dtype = np.float32), np.array(times, dtype = np.float32), np.array(store_states), np.array(store_actions)
 
@@ -208,7 +191,6 @@ class WU_UCT():
             tree = self,
             is_head = True,
             prior_prob = prior_prob
-            # policy_params = [self.policy, self.action_n , self.device, self.env_params]
         )
 
         # An index used to retrieve game-states
@@ -239,7 +221,6 @@ class WU_UCT():
         
 
         # Retrieve the game-state before simulation begins
-        # self.checkpoint_data_manager.load_checkpoint_env("main", self.root_node.checkpoint_idx)
 
         return best_action, self.root_node.prior_prob[1]
 
@@ -261,8 +242,6 @@ class WU_UCT():
                 checkpoint_data = self.checkpoint_data_manager.retrieve(curr_node.checkpoint_idx)
 
                 # Record the task
-                # print("adding node to task recorder", checkpoint_data[0][1:], cloned_curr_node.prior_prob, cloned_curr_node.state[1:])
-                # print("ADDING NODE TO TASK RECORDER", curr_node.prior_prob, curr_node.state[1:])
                 self.expansion_task_recorder[sim_idx] = (checkpoint_data, cloned_curr_node, curr_node)
                 self.unscheduled_expansion_tasks.append(sim_idx)
 
@@ -414,7 +393,6 @@ class WU_UCT():
                     next_state,
                     saving_idx,
                     prior_prob = prior_prob
-                    # policy_params = [self.policy, self.action_n , self.device, self.env_params]
                 )
 
             # Complete Update

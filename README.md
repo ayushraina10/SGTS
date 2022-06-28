@@ -1,20 +1,17 @@
 # SGTS (Sampling Guided Tree Search)
-This repository provides the code used in the Self-Learning Design Agent [paper](). Design Strategy Network([paper]())
+This repository provides the code used in the Self-Learning Design Agent [paper](). The repository builds upon Watch the Unobserved [paper](https://github.com/liuanji/WU-UCT) and makes several updates across files to enable application to complex actions spaces. Major updates are with policy architechture as seen in Policy/ folder and how the nodes are initialized with a prrior distribution on feasible actions. The repository also involves code for network architechture similar to Design Strategy Network([paper](https://asmedigitalcollection.asme.org/mechanicaldesign/article/144/2/021404/1120713/Design-Strategy-Network-A-Deep-Hierarchical)).
 
 # Usage
-
+This repository provides code snippets for future usage. Although the code is not functional as it is, these snippets of tree search can be applied to new problems which are formulated as per the environment and policy wrapper definitions.
 
 ## Prerequisites
 - Python 3.x
 - PyTorch 1.0
-- Gym (with atari) 0.14.0
 - Numpy 1.17.2
-- Scipy 1.3.1
-- OpenCV-Python 4.1.1.26
 
 ## Running
 1. Download or clone the repository.
-2. Run with the default settings:
+2. Add environment in Env folder
 
 * A full list of parameters
   * --model: MCTS model to use (currently support WU-UCT and UCT).
@@ -27,12 +24,12 @@ This repository provides the code used in the Self-Learning Design Agent [paper]
   * --simulation-worker-num: number of simulation workers.
   * --seed: random seed for the environment.
   * --max-episode-length: a strict upper bound of environment's episode length.
-  * --policy: default policy (see above).
+  * --policy: TrussDSN (Untrained) or TrussDSNPre (Trained) or TrussDSNcomb (MT Trained)
   * --device: support "cpu", "cuda:x", and "cuda". If entered "cuda", it will use all available cuda devices. Usually used to load the policy.
   #additional parameters for truss
-  * --scenario: 
-  * --trained:
-  * --repeat:
+  * --scenario: Boundary condition
+  * --trained: True or False
+  * --repeat: Number of trajectories to generate
 
 ## Run on your own environments (identical to WU-UCT)
 We kindly provide an [environment wrapper](https://github.com/liuanji/WU-UCT/tree/master/Env/EnvWrapper.py) and a [policy wrapper](https://github.com/liuanji/WU-UCT/tree/master/Policy/PolicyWrapper.py) to make easy extensions to other environments. All you need is to modify [./Env/EnvWrapper.py](https://github.com/liuanji/WU-UCT/tree/master/Env/EnvWrapper.py) and [./Policy/PolicyWrapper.py](https://github.com/liuanji/WU-UCT/tree/master/Policy/PolicyWrapper.py), and fit in your own environment. Please follow the below instructions.
