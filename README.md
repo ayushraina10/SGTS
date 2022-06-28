@@ -1,8 +1,8 @@
 # SGTS (Sampling Guided Tree Search)
-This repository provides the code used in the Self-Learning Design Agent [paper](). The repository builds upon Watch the Unobserved [paper](https://github.com/liuanji/WU-UCT) and makes several updates across files to enable application to complex actions spaces. Major updates are with policy architechture as seen in Policy/ folder and how the nodes are initialized with a prrior distribution on feasible actions. The repository also involves code for network architechture similar to Design Strategy Network([paper](https://asmedigitalcollection.asme.org/mechanicaldesign/article/144/2/021404/1120713/Design-Strategy-Network-A-Deep-Hierarchical)).
+This repository provides the code used in the Self-Learning Design Agent (paper) [paper](). The repository builds upon Watch the Unobserved [paper](https://github.com/liuanji/WU-UCT) and makes several updates across files to enable application to complex actions spaces. Major updates are within policy architechture (Policy/ folder), root node initialization (Node/), and tree search component (Tree/). The policy network generates a prior distribution on feasible actions which intializes the tree nodes and guides the search in a pruned design space. The policy network architechture is based on Design Strategy Network([paper](https://asmedigitalcollection.asme.org/mechanicaldesign/article/144/2/021404/1120713/Design-Strategy-Network-A-Deep-Hierarchical)) and an updated version of the architecturrer is provided identical to the one used in SLDA paper.
 
 # Usage
-This repository provides code snippets for future usage. Although the code is not functional as it is, these snippets of tree search can be applied to new problems which are formulated as per the environment and policy wrapper definitions.
+This repository provides code snippets for future usage. Although the code is not functional as it is, these snippets of tree search can be applied to new problems with complex action spaces. The strructure for environment and policy classes are defined in environment and policy wrapper definitions respectively.
 
 ## Prerequisites
 - Python 3.x
@@ -11,7 +11,9 @@ This repository provides code snippets for future usage. Although the code is no
 
 ## Running
 1. Download or clone the repository.
-2. Add environment in Env folder
+2. Add environment in Env folder.
+3. Edit Policy architecture as per environment requirements
+4. 
 
 * A full list of parameters
   * --model: MCTS model to use (currently support WU-UCT and UCT).

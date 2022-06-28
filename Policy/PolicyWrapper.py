@@ -22,38 +22,9 @@ class PolicyWrapper():
     def init_policy(self):
         if self.policy_name == "Random":
             self.policy_func = None
-
-        elif self.policy_name == "PPO":
-            assert os.path.exists("./Policy/PPO/PolicyFiles/PPO_" + self.env_name + ".pt"), "Policy file not found"
-
-            self.policy_func = PPOAtariCNN(
-                self.action_n,
-                device = self.device,
-                checkpoint_dir = "./Policy/PPO/PolicyFiles/PPO_" + self.env_name + ".pt"
-            )
-
-        elif self.policy_name == "DistillPPO":
-            assert os.path.exists("./Policy/PPO/PolicyFiles/PPO_" + self.env_name + ".pt"), "Policy file not found"
-            assert os.path.exists("./Policy/PPO/PolicyFiles/SmallPPO_" + self.env_name + ".pt"), "Policy file not found"
-
-            full_policy = PPOAtariCNN(
-                self.action_n,
-                device = "cpu", # To save memory
-                checkpoint_dir = "./Policy/PPO/PolicyFiles/PPO_" + self.env_name + ".pt"
-            )
-
-            small_policy = PPOSmallAtariCNN(
-                self.action_n,
-                device = self.device,
-                checkpoint_dir = "./Policy/PPO/PolicyFiles/SmallPPO_" + self.env_name + ".pt"
-            )
-
-            self.policy_func = [full_policy, small_policy]
             
         elif self.policy_name == "TrussDSN":
-            checkpoint_dir = ""#, "Policy file not found"
-            # assert os.path.exists("./Policy/Truss/PolicyFiles/DSN_" + self.env_name + "_spa.pt")#, "Policy file not found"
-            # assert os.path.exists("./Policy/Truss/PolicyFiles/DSN_" + self.env_name + "_sel.pt")#, "Policy file not found"
+            checkpoint_dir = ""
 
             self.policy_func = DSN(
                 env_params = self.env_params,
@@ -65,9 +36,7 @@ class PolicyWrapper():
             if os.path.exists("./Policy/Truss/PolicyFiles/DSN_enc.pt"):
                 checkpoint_dir ="./Policy/Truss/PolicyFiles/DSN" 
             else:
-                checkpoint_dir = ""#, "Policy file not found"
-            # assert os.path.exists("./Policy/Truss/PolicyFiles/DSN_" + self.env_name + "_spa.pt")#, "Policy file not found"
-            # assert os.path.exists("./Policy/Truss/PolicyFiles/DSN_" + self.env_name + "_sel.pt")#, "Policy file not found"
+                checkpoint_dir = ""
 
             self.policy_func = DSN(
                 env_params = self.env_params,
@@ -79,38 +48,20 @@ class PolicyWrapper():
             if os.path.exists("./Policy/Truss/PolicyFiles/comb_DSN_enc.pt"):
                 checkpoint_dir ="./Policy/Truss/PolicyFiles/comb_DSN" 
             else:
-                checkpoint_dir = ""#, "Policy file not found"
-            # assert os.path.exists("./Policy/Truss/PolicyFiles/DSN_" + self.env_name + "_spa.pt")#, "Policy file not found"
-            # assert os.path.exists("./Policy/Truss/PolicyFiles/DSN_" + self.env_name + "_sel.pt")#, "Policy file not found"
+                checkpoint_dir = ""
 
             self.policy_func = DSN(
                 env_params = self.env_params,
                 device = self.device,
                 checkpoint_dir = checkpoint_dir
             )
-        elif self.policy_name == "TrussDSN_rand":
-            if os.path.exists("./Policy/Truss/PolicyFiles/DSN_enc.pt"):
-                checkpoint_dir ="./Policy/Truss/PolicyFiles/DSN" 
-            else:
-                checkpoint_dir = ""
-            self.policy_func = DSN(
-                env_params = self.env_params,
-                device = self.device,
-                checkpoint_dir = checkpoint_dir,
-                random = True
-            )
-
         else:
             raise NotImplementedError()
 
     def get_action(self, state):
         if self.policy_name == "Random":
             return random.randint(0, self.action_n - 1)
-        elif self.policy_name == "PPO":
-            return self.categorical(self.policy_func.get_action(state))
-        elif self.policy_name == "DistillPPO":
-            return self.categorical(self.policy_func[1].get_action(state))
-        elif self.policy_name in ["TrussDSN", "TrussDSNPre", "TrussDSN_rand", "TrussDSNcomb"]:
+        elif self.policy_name in ["TrussDSN", "TrussDSNPre", "TrussDSNcomb"]:
             return self.categorical_complex(self.policy_func.get_action(state))
         else:
             raise NotImplementedError()
@@ -118,11 +69,7 @@ class PolicyWrapper():
     def get_value(self, state):
         if self.policy_name == "Random":
             return 0.0
-        elif self.policy_name == "PPO":
-            return self.policy_func.get_value(state)
-        elif self.policy_name == "DistillPPO":
-            return self.policy_func[0].get_value(state)
-        elif self.policy_name in ["TrussDSN", "TrussDSNPre", "TrussDSN_rand", "TrussDSNcomb"]:
+        elif self.policy_name in ["TrussDSN", "TrussDSNPre", "TrussDSNcomb"]:
             return self.policy_func.get_value(state)
         else:
             raise NotImplementedError()
@@ -130,11 +77,7 @@ class PolicyWrapper():
     def get_prior_prob(self, state):
         if self.policy_name == "Random":
             return np.ones([self.action_n], dtype = np.float32) / self.action_n
-        elif self.policy_name == "PPO":
-            return self.policy_func.get_action(state)
-        elif self.policy_name == "DistillPPO":
-            return self.policy_func[0].get_action(state)
-        elif self.policy_name in ["TrussDSN", "TrussDSNPre", "TrussDSN_rand", "TrussDSNcomb"]:
+        elif self.policy_name in ["TrussDSN", "TrussDSNPre", "TrussDSNcomb"]:
             return self.categorical_complex(self.policy_func.get_action(state, explore = False), size =  self.max_width, prior_sample = True)
         else:
             raise NotImplementedError()
@@ -178,9 +121,7 @@ class PolicyWrapper():
     
 def _dirichlet_noise(pi):
     noise_mixing = 1
-    epsilon, alpha = 0.01*(noise_mixing) + 0.5*(1-noise_mixing), 0.3#dirichlet_noise parameters (based on chess base alpha zero (0.3), )
-    # n = torch.distributions.dirichlet.Dirichlet(torch.tensor([alpha] * len(pi)))        
-    # noise = n.sample()
+    epsilon, alpha = 0.01*(noise_mixing) + 0.5*(1-noise_mixing), 0.3
     noise = np.random.dirichlet([alpha] * len(pi))
 
     return np.array([(1 - epsilon) * p + epsilon * n for p, n in zip(pi, noise)])
