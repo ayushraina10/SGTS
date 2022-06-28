@@ -1,0 +1,1 @@
+python3 -W ignore main.py --env-name Truss --MCTS-max-steps 2048 --MCTS-max-depth 10 --MCTS-max-width 50 --expansion-worker-num 4 --simulation-worker-num 20  --max-episode-length 50 --policy TrussDSN --device cuda --runid 49 --scenario 21 --trained False --repeat 48
