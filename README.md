@@ -2,7 +2,9 @@
 This repository provides the code used in the Self-Learning Design Agent [paper](). The repository builds upon Watch the Unobserved [paper](https://github.com/liuanji/WU-UCT) and makes several updates across files to enable application to complex actions spaces. Major updates are within policy architechture (Policy/ folder), root node initialization (Node/), and tree search component (Tree/). The policy network generates a prior distribution on feasible actions which intializes the tree nodes and guides the search in a pruned design space. The policy network architechture is based on Design Strategy Network([paper](https://asmedigitalcollection.asme.org/mechanicaldesign/article/144/2/021404/1120713/Design-Strategy-Network-A-Deep-Hierarchical)) and an updated version of the architecturrer is provided identical to the one used in SLDA paper. This rerpository contains the decision making framework of the given agent achitecture. ![](fig.png) 
 
 # Usage
-This repository provides code snippets for future usage. Although the code is not functional as it is, these snippets of tree search can be applied to new problems with complex action spaces. The structure for environment and policy classes are defined in environment and policy wrapper definitions respectively.
+This repository provides code snippets for future usage. These snippets of tree search can be applied to new problems with complex action spaces. The structure for environment and policy classes are defined in environment and policy wrapper definitions respectively. Usage can be seen in 
+* ./run.sh 
+files 
 
 ## Prerequisites
 - Python 3.x
