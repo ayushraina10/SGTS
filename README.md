@@ -1,123 +1,47 @@
-# Notes for the overall working of the WU-UCT code and how to implement it for the spatially guided version of the formula
-- /Tree/WU-UCT.py 
-    - has all the code related top the MCTS search and the parallelization is built into the functions for simulation etc.
-    - These functions will have to be changed based on how I want to implement the spatially guided version of the code
-    - Also note that they are not using the dictionary based methodology which was potentially helpful in the previous code so explore how they are storing state imformation and how it can be implemented for the truss design case
-    - Since this code is valid for trees, think about how being a DAG can be different and possibly problematic for this case since referring to "parents" of a node may lead to inconsistency
-    
-        
-- /Node/WU-UCTnode.py
-    - This file has all the functions for defining every state in the tree and also associated methods about cloning, selecting action based on UCB, info about children and parents etc (may be memory intensive)
-    - 
-    
-## Flow of the algorithm
-- main.py
-    - multiprocessing.set_start_method("forksever") <--- // what is this??
-    - Initialize tree = /Tree/WU_UCT
-    
-    - Simulate trajectory using WU_UCT (MCTStree.simuilate_trajectory()) [star]
-    
-    - save file and results
-    
-    - Close Tree
-    
-    
-- /Tree/WU_UCT.py
-    
-    - simulate_trajectory(episode_length)
-        - this function not just runs the WU_UCT algorithm but also interacts with the environment and makes iterative decision untill the end of the episode
-        - self.wrapped_env() function is used to simplify the design environment such that it can be used for multiprocesing as well?
-        - simulate_single_mode(state)
-            - this function runs the actual MCTS algorithm and makes the action decision (similar to MCTS.ActionProbs)
-        - calculate and store the rewards associated and run until done
-        
-     - simulate_single_move(state)
-         - this function is a wrapper for the actual distributed MCTS algorithm as it: 
-             - clears out the cache and recorders
-             - free the workers
-             - intializes the root node Node/WU_UCTnode
-             - runs multiple simulations of the algorithm
-                 - runs simulate_single_step(simulation_index)
-             - select the best action from the constructed tree
-             
-     - simulate_single_step(simulation_index)
-         the 4 sequential steps of selection, expansion, Assigning simulation tasks, Update the nodes
-         
-         #important node functions to note
-         - no_child_available (checks if no children of the node are available)
-         - all_child_visited
-         - all_child_visited
-         
-         - update_history
-         - rewards
-         
-         - dones
-         - children
-         - checkpoint_idx
-         
-         - update_history
-         - add_child
-         
-         - update_incomplete
-         - parent
-    
-    
-- /Node/WU_UCTnode.py
+# SGTS (Sampling Guided Tree Search)
+This repository provides the code used in the Self-Learning Design Agent [paper](). The repository builds upon Watch the Unobserved [paper](https://github.com/liuanji/WU-UCT) and makes several updates across files to enable application to complex actions spaces. Major updates are within policy architechture (Policy/ folder), root node initialization (Node/), and tree search component (Tree/). The policy network generates a prior distribution on feasible actions which intializes the tree nodes and guides the search in a pruned design space. The policy network architechture is based on Design Strategy Network([paper](https://asmedigitalcollection.asme.org/mechanicaldesign/article/144/2/021404/1120713/Design-Strategy-Network-A-Deep-Hierarchical)) and an updated version of the architecturrer is provided identical to the one used in SLDA paper. This rerpository contains the decision making framework of the given agent achitecture. ![](fig.png) 
 
-    - init variables:
-        - action_n (list of feasible actions)
-        - state (comprehensive representation of the design state)
-        - checkpoint_idc (information about the checkpoint index, possibly the info about the state as well)
-        - parent (info about the parent to maintain the linked list)
-        - tree (???) (possibly the set of connected nodes (children), it defined max_width of tree)
-        - is_head (possibly bool variable to define if the node is a root node)
-        
-        - children (initialized as a list of None based on feasible set of action associated with the state)
-        - rewards (initialized as 0.0 for every feasible action)
-        - dones (initialized as False for every feasible action)
-        - children_visit_count (initialized as 0 for every feasible action)
-        - children_completed_visit_count (initialized as 0 for every feasible action) ???
-        - Q_values (initialized as 0s)
-        - visit_count (specific state's visitation count)
-        
-        - prior prob (prior probabilities for the set of feasible actions, uniform prior is used if none available)
-        - traverse_history = dict() (tree traversal history record)
-        - visited_node_count ???
-        - updated_node_count ???
-        - moving_aveg_calculator ??? (contains the mean and sample variances for some particular value)
-        
-        
-        
-- Worker class
+# Usage
+This repository provides code snippets for future usage. Although the code is not functional as it is, these snippets of tree search can be applied to new problems with complex action spaces. The structure for environment and policy classes are defined in environment and policy wrapper definitions respectively.
 
-    - run????
-    - expand node
-    - simulate
-    
-    - get action
-    - get value
-    - get prior prob
-    
-    
-    
-    
-## files to edit    
-- WU_UCT Tree
-- WU_UCT Node
+## Prerequisites
+- Python 3.x
+- PyTorch 1.0
+- Numpy 1.17.2
 
-- Worker
+## Running
+1. Download or clone the repository.
+2. Add environment in Env folder.
+3. Edit Policy architecture as per environment requirements
 
+* A full list of parameters
+  * --model: MCTS model to use (currently only supports WU-UCT).
+  * --env-name: name of the environment.
+  * --MCTS-max-steps: number of simulation steps in the planning phase.
+  * --MCTS-max-depth: maximum planning depth.
+  * --MCTS-max-width: maximum width for each node.
+  * --gamma: environment discount factor.
+  * --expansion-worker-num: number of expansion workers.
+  * --simulation-worker-num: number of simulation workers.
+  * --seed: random seed for the environment.
+  * --max-episode-length: a strict upper bound of environment's episode length.
+  * --policy: TrussDSN (Untrained) or TrussDSNPre (Trained) or TrussDSNcomb (MT Trained)
+  * --device: support "cpu", "cuda:x", and "cuda". If entered "cuda", it will use all available cuda devices. Usually used to load the policy.
+  #additional parameters for truss
+  * --scenario: Boundary condition
+  * --trained: True or False
+  * --repeat: Number of trajectories to generate
 
-- Env Wrapper
+## Run on your own environments (identical to WU-UCT)
+We kindly provide an [environment wrapper](https://github.com/liuanji/WU-UCT/tree/master/Env/EnvWrapper.py) and a [policy wrapper](https://github.com/liuanji/WU-UCT/tree/master/Policy/PolicyWrapper.py) to make easy extensions to other environments. All you need is to modify [./Env/EnvWrapper.py](https://github.com/liuanji/WU-UCT/tree/master/Env/EnvWrapper.py) and [./Policy/PolicyWrapper.py](https://github.com/liuanji/WU-UCT/tree/master/Policy/PolicyWrapper.py), and fit in your own environment. Please follow the below instructions.
 
+1. Edit the class EnvWrapper in [./Env/EnvWrapper.py](https://github.com/liuanji/WU-UCT/tree/master/Env/EnvWrapper.py).
 
+    Nest your environment into the wrapper by providing specific functionality in each of the member function of EnvWrapper. There are currently four input arguments to EnvWrapper: *env_name*, *max_episode_length*, *enable_record*, and *record_path*. If additional information needs to be imported, you may first consider adding them in *env_name*.
 
+2. Edit the class PolicyWrapper in [./Policy/PolicyWrapper.py](https://github.com/liuanji/WU-UCT/tree/master/Policy/PolicyWrapper.py).
 
-## files that have been edited
+    Similarly, nest your default policy in PolicyWrapper, and pass the corresponding method using --policy. You will need to rewrite *get_action*, *get_value*, and *get_prior_prob* three member functions.
 
-- Policy/Truss/DSNPolicy.py
-    
-    
-
-
-
+# Reference
+Upcoming publication in IDETC ASME 2022 "Self Learning Design Agent (SLDA): Enabling design learning and tree search in complex action spaces" and submitted to Journal of Mechanical Design 2023 "Learning to design without prior data: Discovering generalizable design strategies using deep learning and tree search" 
