@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "../../../MCTS_research/SG-MCTS"
+		},
+		{
+			"path": ".."
+		}
+	],
+	"settings": {}
+}
